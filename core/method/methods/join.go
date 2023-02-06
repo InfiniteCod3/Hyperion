@@ -6,7 +6,6 @@ import (
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
 	"fmt"
-	"net"
 	"strconv"
 	"time"
 )
@@ -25,7 +24,8 @@ func (join Join) Start(info core.AttackInfo) {
 	for {
 		for i := 0; i < info.PerDelay; i++ {
 			go func() {
-				conn, err := mc.DialMC(net.JoinHostPort(info.Ip, strconv.Itoa(info.Port)))
+				fmt.Println("CONNECTING")
+				conn, err := mc.DialMC(info.Ip + ":" + strconv.Itoa(info.Port))
 				if err != nil {
 					fmt.Println(err)
 				}

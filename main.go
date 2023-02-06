@@ -5,8 +5,7 @@ import (
 	"Hyperion/core/method"
 	"Hyperion/core/method/methods"
 	"flag"
-	"fmt"
-	"os"
+	"time"
 )
 
 var (
@@ -18,15 +17,14 @@ var (
 func main() {
 	flag.Parse()
 	registerMethod()
-	method, ok := method.GetMethod("join")
-	if !ok {
-		fmt.Println("ERROR GETTING METHOD")
-		os.Exit(1)
-	}
+	method := methods.Join{}
 	method.Start(core.AttackInfo{
 		Ip:       *ip,
 		Port:     *port,
 		Protocol: *protocol,
+		Duration: 600 * time.Second,
+		PerDelay: 1000,
+		Delay:    0,
 	})
 }
 
