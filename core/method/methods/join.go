@@ -24,7 +24,6 @@ func (join Join) Start(info core.AttackInfo) {
 	for {
 		for i := 0; i < info.PerDelay; i++ {
 			go func() {
-				fmt.Println("CONNECTING")
 				conn, err := mc.DialMC(info.Ip + ":" + strconv.Itoa(info.Port))
 				if err != nil {
 					fmt.Println(err)
