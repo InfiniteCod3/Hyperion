@@ -1,7 +1,7 @@
 package methods
 
 import (
-	"Hyperion/core/method"
+	"Hyperion/core"
 )
 
 type MOTD struct{}
@@ -11,11 +11,11 @@ func (Method MOTD) Name() string {
 }
 
 func (j MOTD) Description() string {
-	return "Motd method implementation"
+	return "Joins server and then flood request motd"
 }
 
-func (motd MOTD) Start(info method.AttackInfo) {
-	// implementation for starting the Motd method
+func (motd MOTD) Start(info core.AttackInfo) {
+
 }
 
 func (motd MOTD) Stop() {

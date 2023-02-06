@@ -1,23 +1,14 @@
 package method
 
 import (
+	"Hyperion/core"
 	"strings"
-	"time"
 )
-
-type AttackInfo struct {
-	Ip       string
-	Port     int
-	Protocol int
-	Duration time.Duration
-	Delay    time.Duration
-	PerDelay time.Duration
-}
 
 type Method interface {
 	Name() string
 	Description() string
-	Start(info AttackInfo)
+	Start(info core.AttackInfo)
 	Stop()
 }
 
