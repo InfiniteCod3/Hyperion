@@ -20,7 +20,7 @@ type Connection struct {
 }
 
 func DialMC(ip string, port int, proxyDial *proxy.Dial) (connection *Connection, err error) {
-	conn, perr := (*proxyDial)(ip, strconv.Itoa(port))
+	conn, perr := (*proxyDial)("tcp", net.JoinHostPort(ip, strconv.Itoa(port)))
 	err = perr
 	connection = WrapConn(conn)
 	return
