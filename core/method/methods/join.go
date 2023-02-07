@@ -29,8 +29,7 @@ func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 }
 func connect(info *core.AttackInfo, dialPool *proxy.DialPool) {
 	{
-		dial := dialPool.GetNext()
-		conn, err := mc.DialMC(info.Ip, info.Port, dial)
+		conn, err := mc.DialMC(info.Ip, info.Port, dialPool.GetNext())
 		if err != nil {
 			return
 		}
