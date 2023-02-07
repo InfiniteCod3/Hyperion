@@ -19,7 +19,9 @@ func (join Join) Description() string {
 }
 
 func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
-	go connect(info, dialPool)
+	for {
+		go connect(info, dialPool)
+	}
 }
 func connect(info *core.AttackInfo, dialPool *proxy.DialPool) {
 	{
