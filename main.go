@@ -23,7 +23,6 @@ func main() {
 
 	flag.Parse()
 	registerMethod()
-
 	proxyManager := proxy.ProxyManager{}
 	err := proxy.LoadFromFile(proxy.SOCKS4, "socks4.txt", &proxyManager)
 	if err != nil {
