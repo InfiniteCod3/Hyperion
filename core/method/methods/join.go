@@ -10,6 +10,8 @@ import (
 
 type Join struct{}
 
+var shouldRun = false
+
 func (join Join) Name() string {
 	return "Join"
 }
@@ -19,12 +21,15 @@ func (join Join) Description() string {
 }
 
 func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
-	for i := 0; i < info.Loops; i++ {
-		go func() {
-			for {
-				go connect(info, dialPool)
-			}
-		}()
+	shouldRun = true
+	for shouldRun {
+		for i := 0; i < info.Loops; i++ {
+			go func() {
+				for shouldRun {
+					go connect(info, dialPool)
+				}
+			}()
+		}
 	}
 }
 
@@ -38,5 +43,5 @@ func connect(info *core.AttackInfo, dialPool *proxy.DialPool) {
 }
 
 func (join Join) Stop() {
-	// implementation for stopping the join method
+	shouldRun = false
 }
