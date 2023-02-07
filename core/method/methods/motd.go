@@ -3,9 +3,12 @@ package methods
 import (
 	"Hyperion/core"
 	"Hyperion/core/proxy"
+	"sync"
 )
 
-type MOTD struct{}
+type MOTD struct {
+	connPool sync.Pool
+}
 
 func (Method MOTD) Name() string {
 	return "MOTD"

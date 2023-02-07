@@ -24,12 +24,14 @@ func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 	shouldRun = true
 	for shouldRun {
 		for i := 0; i < info.Loops; i++ {
-			go func() {
-				for shouldRun {
-					go connect(info, dialPool)
-				}
-			}()
+			go connectLoop(info, dialPool)
 		}
+	}
+}
+
+func connectLoop(info *core.AttackInfo, dialPool *proxy.DialPool) {
+	for shouldRun {
+		go connect(info, dialPool)
 	}
 }
 

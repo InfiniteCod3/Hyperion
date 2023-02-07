@@ -3,9 +3,12 @@ package methods
 import (
 	"Hyperion/core"
 	"Hyperion/core/proxy"
+	"sync"
 )
 
-type Ping struct{}
+type Ping struct {
+	connPool sync.Pool
+}
 
 func (ping Ping) Name() string {
 	return "Ping"
