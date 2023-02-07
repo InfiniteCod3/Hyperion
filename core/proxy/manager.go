@@ -8,6 +8,7 @@ import (
 )
 
 type ProxyProtocol string
+
 type Dial func(string, string) (net.Conn, error)
 
 const (
@@ -44,13 +45,13 @@ func (manager *ProxyManager) Remove(proxy *Proxy) {
 }
 
 type DialPool struct {
-	dials []*Dial
-	index int
+	dials   []*Dial
+	atIndex int
 }
 
 func (manager *DialPool) GetNext() (dial *Dial) {
-	dial = manager.dials[manager.index]
-	manager.index = (manager.index + 1) % len(manager.dials)
+	dial = manager.dials[manager.atIndex]
+	manager.atIndex = (manager.atIndex + 1) % len(manager.dials)
 	return
 }
 

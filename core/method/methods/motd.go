@@ -2,6 +2,7 @@ package methods
 
 import (
 	"Hyperion/core"
+	"Hyperion/core/proxy"
 )
 
 type MOTD struct{}
@@ -14,7 +15,7 @@ func (j MOTD) Description() string {
 	return "Joins server and then flood request motd"
 }
 
-func (motd MOTD) Start(info core.AttackInfo) {
+func (motd MOTD) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 
 }
 

@@ -2,13 +2,14 @@ package method
 
 import (
 	"Hyperion/core"
+	"Hyperion/core/proxy"
 	"strings"
 )
 
 type Method interface {
 	Name() string
 	Description() string
-	Start(info core.AttackInfo)
+	Start(info *core.AttackInfo, dialPool *proxy.DialPool)
 	Stop()
 }
 

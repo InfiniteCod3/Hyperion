@@ -2,6 +2,7 @@ package methods
 
 import (
 	"Hyperion/core"
+	"Hyperion/core/proxy"
 )
 
 type Ping struct{}
@@ -14,7 +15,7 @@ func (ping Ping) Description() string {
 	return "Flood server with pings"
 }
 
-func (ping Ping) Start(info core.AttackInfo) {
+func (ping Ping) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 
 }
 

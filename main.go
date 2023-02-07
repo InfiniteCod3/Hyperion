@@ -4,7 +4,9 @@ import (
 	"Hyperion/core"
 	"Hyperion/core/method"
 	"Hyperion/core/method/methods"
+	"Hyperion/core/proxy"
 	"flag"
+	"log"
 	"time"
 )
 
@@ -18,17 +20,34 @@ var (
 )
 
 func main() {
+
 	flag.Parse()
 	registerMethod()
+
+	proxyManager := proxy.ProxyManager{}
+	err := proxy.LoadFromFile(proxy.SOCKS4, "socks4.txt", &proxyManager)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dialPool := proxy.DialPool{}
+	dialPool.AddFromProxyManager(&proxyManager)
+
 	method := methods.Join{}
-	method.Start(core.AttackInfo{
-		Ip:       *ip,
-		Port:     *port,
-		Protocol: *protocol,
-		Duration: time.Duration(*duration) * time.Second,
-		PerDelay: *perDelay,
-		Delay:    time.Duration(*delay),
-	})
+
+	method.Start(
+
+		&core.AttackInfo{
+			Ip:       *ip,
+			Port:     *port,
+			Protocol: *protocol,
+			Duration: time.Duration(*duration) * time.Second,
+			PerDelay: *perDelay,
+			Delay:    time.Duration(*delay),
+		},
+
+		&dialPool,
+	)
 }
 
 func registerMethod() {

