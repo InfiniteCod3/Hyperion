@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func LoadFromFile(protocol ProxyProtocol, path string, manager *ProxyManager) error {
@@ -16,7 +17,7 @@ func LoadFromFile(protocol ProxyProtocol, path string, manager *ProxyManager) er
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
+		line := strings.TrimSpace(scanner.Text())
 		ip, port, err := net.SplitHostPort(line)
 		if err != nil {
 			return err

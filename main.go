@@ -43,7 +43,7 @@ func main() {
 			Protocol: *protocol,
 			Duration: time.Duration(*duration) * time.Second,
 			PerDelay: *perDelay,
-			Delay:    time.Duration(*delay),
+			Delay:    time.Duration(*delay * int(time.Second)),
 		},
 
 		&dialPool,
