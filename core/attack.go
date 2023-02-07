@@ -7,6 +7,5 @@ type AttackInfo struct {
 	Port     int
 	Protocol int
 	Duration time.Duration
-	Delay    time.Duration
-	PerDelay int
+	Loops    int
 }
