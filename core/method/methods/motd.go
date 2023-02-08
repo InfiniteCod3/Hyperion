@@ -8,7 +8,6 @@ import (
 type MOTD struct {
 	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
-	isRunning    bool
 }
 
 func (Method MOTD) Name() string {
@@ -17,10 +16,6 @@ func (Method MOTD) Name() string {
 
 func (motd MOTD) Description() string {
 	return "Joins server and then flood request motd"
-}
-
-func (motd MOTD) IsRunning() bool {
-	return motd.isRunning
 }
 
 func (motd MOTD) Start() {
