@@ -1,6 +1,8 @@
 package core
 
-import "time"
+import (
+	"time"
+)
 
 type AttackInfo struct {
 	Ip       string
@@ -8,4 +10,6 @@ type AttackInfo struct {
 	Protocol int
 	Duration time.Duration
 	Loops    int
+	Delay    time.Duration
+	PerDelay int
 }

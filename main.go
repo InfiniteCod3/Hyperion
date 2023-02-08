@@ -16,6 +16,8 @@ var (
 	protocol = flag.Int("protcol", 761, "sets version protocol")
 	duration = flag.Int("duration", 600, "duration in sec")
 	loops    = flag.Int("loops", 1, "for loop threads")
+	delay    = flag.Int("delay", 1, "delay in sec")
+	perDelay = flag.Int("perdelay", 1000, "connections per delay")
 )
 
 func main() {
@@ -41,6 +43,8 @@ func main() {
 			Protocol: *protocol,
 			Duration: time.Duration(*duration) * time.Second,
 			Loops:    *loops,
+			Delay:    time.Duration(*delay) * time.Second,
+			PerDelay: *perDelay,
 		},
 
 		&dialPool,

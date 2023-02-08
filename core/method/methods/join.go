@@ -6,6 +6,7 @@ import (
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
+	"time"
 )
 
 type Join struct{}
@@ -23,15 +24,10 @@ func (join Join) Description() string {
 func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
 	shouldRun = true
 	for shouldRun {
-		for i := 0; i < info.Loops; i++ {
-			go connectLoop(info, dialPool)
+		for i := 0; i < info.PerDelay; i++ {
+			go connect(info, dialPool)
 		}
-	}
-}
-
-func connectLoop(info *core.AttackInfo, dialPool *proxy.DialPool) {
-	for shouldRun {
-		go connect(info, dialPool)
+		time.Sleep(info.Delay)
 	}
 }
 
