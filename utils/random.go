@@ -2,35 +2,19 @@ package utils
 
 import (
 	"math/rand"
-	"strings"
 	"time"
 )
 
-var valid_name_runes = []rune("aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789_")
-var sb = strings.Builder{}
+var validNameRunes = []rune("aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789_")
 
-func seed() {
+func Init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// func RandomUTF16String(length int) (str string) {
-// 	seed()
-// }
-
-// func RandomUTF8String(length int) (str string) {
-// 	seed()
-// }
-
-func RandomName(length int) (str string) {
-	seed()
-	for i := 0; i < length; i++ {
-		sb.WriteRune(valid_name_runes[rand.Intn(len(valid_name_runes))])
+func RandomName(length int) string {
+	b := make([]rune, length)
+	for i := range b {
+		b[i] = validNameRunes[rand.Intn(len(validNameRunes))]
 	}
-	str = sb.String()
-	sb.Reset()
-	return
+	return string(b)
 }
-
-// func RandomNumberString(lowerBound, upperBound int) (str string) {
-// 	seed()
-// }

@@ -26,6 +26,7 @@ func (join Join) Description() string {
 }
 
 func (join Join) Start() {
+	utils.Init()
 	shouldRun = true
 	for i := 0; i < join.Info.Loops; i++ {
 		go loop(&join)
