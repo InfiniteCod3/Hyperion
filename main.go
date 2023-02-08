@@ -50,6 +50,7 @@ func main() {
 	}
 
 	method.Start()
+
 	for method.IsRunning() {
 		fmt.Print("Running")
 		time.Sleep(1 * time.Second)
