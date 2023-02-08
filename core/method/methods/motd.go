@@ -3,11 +3,11 @@ package methods
 import (
 	"Hyperion/core"
 	"Hyperion/core/proxy"
-	"sync"
 )
 
 type MOTD struct {
-	connPool sync.Pool
+	Info         *core.AttackInfo
+	ProxyManager *proxy.ProxyManager
 }
 
 func (Method MOTD) Name() string {
@@ -18,7 +18,7 @@ func (j MOTD) Description() string {
 	return "Joins server and then flood request motd"
 }
 
-func (motd MOTD) Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
+func (motd MOTD) Start() {
 
 }
 

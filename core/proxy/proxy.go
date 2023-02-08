@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	"strconv"
+	"net"
 )
 
 type ProxyProtocol string
@@ -14,12 +14,12 @@ const (
 
 type Proxy struct {
 	Ip       string
-	Port     uint16
+	Port     string
 	Protocol ProxyProtocol
 }
 
 func (proxy *Proxy) GetString() (key string) {
-	return string(proxy.Protocol) + "://" + proxy.Ip + ":" + strconv.Itoa(int(proxy.Port))
+	return string(proxy.Protocol) + "://" + net.JoinHostPort(proxy.Ip, proxy.Port)
 }
 
 type ProxyManager struct {

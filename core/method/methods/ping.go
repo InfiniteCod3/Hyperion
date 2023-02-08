@@ -3,11 +3,11 @@ package methods
 import (
 	"Hyperion/core"
 	"Hyperion/core/proxy"
-	"sync"
 )
 
 type Ping struct {
-	connPool sync.Pool
+	Info         *core.AttackInfo
+	ProxyManager *proxy.ProxyManager
 }
 
 func (ping Ping) Name() string {
@@ -18,7 +18,7 @@ func (ping Ping) Description() string {
 	return "Flood server with pings"
 }
 
-func (ping Ping) Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
+func (ping Ping) Start() {
 
 }
 

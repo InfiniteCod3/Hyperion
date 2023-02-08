@@ -6,7 +6,7 @@ import (
 
 type AttackInfo struct {
 	Ip       string
-	Port     int
+	Port     string
 	Protocol int
 	Duration time.Duration
 	Loops    int
