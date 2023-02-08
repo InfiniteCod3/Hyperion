@@ -13,6 +13,7 @@ import (
 type Join struct {
 	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
+	isRunning    bool
 }
 
 var shouldRun = false
@@ -25,7 +26,12 @@ func (join Join) Description() string {
 	return "Floods server with bots"
 }
 
+func (join Join) IsRunning() bool {
+	return join.isRunning
+}
+
 func (join Join) Start() {
+	join.isRunning = true
 	shouldRun = true
 	for i := 0; i < join.Info.Loops; i++ {
 		go loop(&join)
@@ -63,4 +69,5 @@ func connect(join *Join) error {
 
 func (join Join) Stop() {
 	shouldRun = false
+	join.isRunning = false
 }

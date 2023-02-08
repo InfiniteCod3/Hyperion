@@ -7,6 +7,7 @@ import (
 type Method interface {
 	Name() string
 	Description() string
+	IsRunning() bool
 	Start()
 	Stop()
 }

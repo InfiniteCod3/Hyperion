@@ -6,6 +6,7 @@ import (
 	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
 	"flag"
+	"fmt"
 	"log"
 	"time"
 )
@@ -49,6 +50,11 @@ func main() {
 	}
 
 	method.Start()
+	for method.IsRunning() {
+		fmt.Print("Running")
+		time.Sleep(1 * time.Second)
+		fmt.Print("\r")
+	}
 }
 
 func registerMethod(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
