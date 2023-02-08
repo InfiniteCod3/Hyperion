@@ -9,7 +9,7 @@ import (
 type Method interface {
 	Name() string
 	Description() string
-	Start(info *core.AttackInfo, dialPool *proxy.DialPool)
+	Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager)
 	Stop()
 }
 

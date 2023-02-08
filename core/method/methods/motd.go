@@ -18,7 +18,7 @@ func (j MOTD) Description() string {
 	return "Joins server and then flood request motd"
 }
 
-func (motd MOTD) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
+func (motd MOTD) Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
 
 }
 

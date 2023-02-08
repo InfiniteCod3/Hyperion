@@ -1,15 +1,10 @@
 package proxy
 
 import (
-	"net"
 	"strconv"
-
-	"h12.io/socks"
 )
 
 type ProxyProtocol string
-
-type Dial func(string, string) (net.Conn, error)
 
 const (
 	HTTP   ProxyProtocol = "http"
@@ -29,6 +24,7 @@ func (proxy *Proxy) GetString() (key string) {
 
 type ProxyManager struct {
 	proxies []*Proxy
+	atIndex int
 }
 
 func (manager *ProxyManager) Add(proxy *Proxy) {
@@ -44,33 +40,8 @@ func (manager *ProxyManager) Remove(proxy *Proxy) {
 	}
 }
 
-type DialPool struct {
-	dials   []*Dial
-	atIndex int
-}
-
-func (manager *DialPool) GetNext() (dial *Dial) {
-	dial = manager.dials[manager.atIndex]
-	manager.atIndex = (manager.atIndex + 1) % len(manager.dials)
+func (manager *ProxyManager) GetNext() (proxy *Proxy) {
+	proxy = manager.proxies[manager.atIndex]
+	manager.atIndex = (manager.atIndex + 1) % len(manager.proxies)
 	return
-}
-
-func (manager *DialPool) AddFromProxyManager(proxyManager *ProxyManager) {
-	for _, proxy := range proxyManager.proxies {
-		dial := Dial(socks.Dial(proxy.GetString()))
-		manager.Add(&dial)
-	}
-}
-
-func (manager *DialPool) Add(dial *Dial) {
-	manager.dials = append(manager.dials, dial)
-}
-
-func (manager *DialPool) Remove(dial *Dial) {
-	for i, d := range manager.dials {
-		if d == dial {
-			manager.dials = append(manager.dials[:i], manager.dials[i+1:]...)
-			return
-		}
-	}
 }

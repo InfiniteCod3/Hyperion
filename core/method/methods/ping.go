@@ -18,7 +18,7 @@ func (ping Ping) Description() string {
 	return "Flood server with pings"
 }
 
-func (ping Ping) Start(info *core.AttackInfo, dialPool *proxy.DialPool) {
+func (ping Ping) Start(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
 
 }
 

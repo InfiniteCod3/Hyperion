@@ -7,6 +7,8 @@ import (
 	"io"
 	"net"
 	"strconv"
+
+	"h12.io/socks"
 )
 
 const DefaultPort = 25565
@@ -19,8 +21,8 @@ type Connection struct {
 	threshold int
 }
 
-func DialMC(ip string, port int, proxyDial *proxy.Dial) (connection *Connection, err error) {
-	conn, perr := (*proxyDial)("tcp", net.JoinHostPort(ip, strconv.Itoa(port)))
+func DialMC(ip string, port int, proxy *proxy.Proxy) (connection *Connection, err error) {
+	conn, perr := socks.DialSocksProxy(socks.SOCKS4, net.JoinHostPort(proxy.Ip, strconv.Itoa(int(proxy.Port))))("tcp", net.JoinHostPort(ip, strconv.Itoa(port)))
 	err = perr
 	connection = WrapConn(conn)
 	return
