@@ -17,6 +17,7 @@ type Join struct {
 }
 
 var shouldRun = false
+var locked = true
 
 func (join Join) Name() string {
 	return "Join"
@@ -36,15 +37,18 @@ func (join Join) Start() {
 		fmt.Printf("\r")
 	}
 	fmt.Println("ALL LOOPS RUNNING!")
+	locked = false
 }
 
 func loop(join *Join) {
 	proxy := join.ProxyManager.GetNext()
 	for shouldRun {
-		for i := 0; i < join.Info.ConnPerProxyPerDelay; i++ {
-			go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+		if !locked {
+			for i := 0; i < join.Info.ConnPerProxyPerDelay; i++ {
+				go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+			}
+			time.Sleep(join.Info.Delay)
 		}
-		time.Sleep(join.Info.Delay)
 	}
 }
 
