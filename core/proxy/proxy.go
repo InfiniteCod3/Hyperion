@@ -45,12 +45,10 @@ func (manager *ProxyManager) Length() (length int) {
 	return
 }
 
-func (manager *ProxyManager) GetNext() (proxy *Proxy) {
+func (manager *ProxyManager) GetNext() *Proxy {
+	manager.atIndex = manager.atIndex + 1
 	if manager.atIndex >= len(manager.proxies) {
 		manager.atIndex = 0
-	} else {
-		manager.atIndex = manager.atIndex + 1
 	}
-	proxy = manager.proxies[manager.atIndex]
-	return
+	return manager.proxies[manager.atIndex]
 }
