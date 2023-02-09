@@ -45,7 +45,7 @@ func loop(join *Join) {
 	for shouldRun {
 		if !locked {
 			for i := 0; i < join.Info.ConnPerProxyPerDelay; i++ {
-				go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+				connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
 			}
 			time.Sleep(join.Info.Delay)
 		}
