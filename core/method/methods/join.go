@@ -6,9 +6,7 @@ import (
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
-	"fmt"
 	"strconv"
-	"time"
 )
 
 type Join struct {
@@ -31,24 +29,17 @@ func (join Join) Start() {
 	utils.Init()
 	shouldRun = true
 
-	for i := 0; i < join.ProxyManager.Length(); i++ {
-		fmt.Printf("Started %d loops", i)
-		go loop(&join)
-		fmt.Printf("\r")
-	}
-	fmt.Println("ALL LOOPS RUNNING!")
-	locked = false
+	go func() {
+		for shouldRun {
+			loop(&join)
+		}
+	}()
 }
 
 func loop(join *Join) {
 	proxy := join.ProxyManager.GetNext()
-	for shouldRun {
-		if !locked {
-			for i := 0; i < join.Info.ConnPerProxyPerDelay; i++ {
-				connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
-			}
-			time.Sleep(join.Info.Delay)
-		}
+	for i := 0; i < join.Info.ConnPerProxy; i++ {
+		go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
 	}
 }
 

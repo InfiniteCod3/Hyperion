@@ -5,10 +5,9 @@ import (
 )
 
 type AttackInfo struct {
-	Ip                   string
-	Port                 string
-	Protocol             int
-	Duration             time.Duration
-	ConnPerProxyPerDelay int
-	Delay                time.Duration
+	Ip           string
+	Port         string
+	Protocol     int
+	Duration     time.Duration
+	ConnPerProxy int
 }

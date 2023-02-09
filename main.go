@@ -15,7 +15,7 @@ var (
 	port     = flag.String("port", "25565", "sets port")
 	protocol = flag.Int("protcol", 761, "sets version protocol")
 	duration = flag.Int("duration", 600, "duration in sec")
-	c3PD     = flag.Int("c3pd", 5, "no of conn per proxy per delay")
+	cpp      = flag.Int("cpp", 5, "no of conn per proxy per delay")
 	delay    = flag.Int("delay", 1, "delay in sec")
 )
 
@@ -31,12 +31,11 @@ func main() {
 	}
 
 	info := core.AttackInfo{
-		Ip:                   *ip,
-		Port:                 *port,
-		Protocol:             *protocol,
-		Duration:             time.Duration(*duration) * time.Second,
-		ConnPerProxyPerDelay: *c3PD,
-		Delay:                time.Duration(*delay) * time.Second,
+		Ip:           *ip,
+		Port:         *port,
+		Protocol:     *protocol,
+		Duration:     time.Duration(*duration) * time.Second,
+		ConnPerProxy: *c3PD,
 	}
 
 	registerMethod(&info, &proxyManager)
