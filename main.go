@@ -18,6 +18,7 @@ var (
 	cpp      = flag.Int("cpp", 5, "no of conn per proxy per delay")
 	delay    = flag.Int("delay", 1, "delay in sec")
 	loops    = flag.Int("loops", 1, "loops")
+	perDelay = flag.Int("per", 1000, "per delay")
 )
 
 func main() {
@@ -39,6 +40,7 @@ func main() {
 		ConnPerProxy: *cpp,
 		Delay:        time.Duration(*delay) * time.Second,
 		Loops:        *loops,
+		PerDelay:     *perDelay,
 	}
 
 	registerMethod(&info, &proxyManager)

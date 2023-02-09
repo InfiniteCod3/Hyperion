@@ -7,6 +7,7 @@ import (
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
 	"strconv"
+	"time"
 )
 
 type Join struct {
@@ -31,7 +32,10 @@ func (join Join) Start() {
 	for i := 0; i < join.Info.Loops; i++ {
 		go func() {
 			for shouldRun {
-				loop(&join)
+				for j := 0; j < join.Info.PerDelay; j++ {
+					loop(&join)
+				}
+				time.Sleep(join.Info.Delay)
 			}
 		}()
 	}
