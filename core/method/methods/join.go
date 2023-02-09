@@ -15,7 +15,6 @@ type Join struct {
 }
 
 var shouldRun = false
-var locked = true
 
 func (join Join) Name() string {
 	return "Join"
@@ -29,11 +28,13 @@ func (join Join) Start() {
 	utils.Init()
 	shouldRun = true
 
-	go func() {
-		for shouldRun {
-			loop(&join)
-		}
-	}()
+	for i := 0; i < join.Info.Loops; i++ {
+		go func() {
+			for shouldRun {
+				loop(&join)
+			}
+		}()
+	}
 }
 
 func loop(join *Join) {

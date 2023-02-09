@@ -10,4 +10,6 @@ type AttackInfo struct {
 	Protocol     int
 	Duration     time.Duration
 	ConnPerProxy int
+	Delay        time.Duration
+	Loops        int
 }
