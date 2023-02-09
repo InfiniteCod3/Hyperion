@@ -35,7 +35,7 @@ func main() {
 		Port:         *port,
 		Protocol:     *protocol,
 		Duration:     time.Duration(*duration) * time.Second,
-		ConnPerProxy: *c3PD,
+		ConnPerProxy: *cpp,
 	}
 
 	registerMethod(&info, &proxyManager)
