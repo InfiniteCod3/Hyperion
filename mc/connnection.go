@@ -20,8 +20,8 @@ type Connection struct {
 	threshold int
 }
 
-func DialMC(ip string, port string, proxy *proxy.Proxy) (connection *Connection, err error) {
-	conn, perr := socks.DialSocksProxy(socks.SOCKS4, net.JoinHostPort(proxy.Ip, proxy.Port))("tcp", net.JoinHostPort(ip, port))
+func DialMC(ip *string, port *string, proxy *proxy.Proxy) (connection *Connection, err error) {
+	conn, perr := socks.DialSocksProxy(socks.SOCKS4, net.JoinHostPort(proxy.Ip, proxy.Port))("tcp", net.JoinHostPort(*ip, *port))
 	err = perr
 	connection = WrapConn(conn)
 	return

@@ -6,7 +6,6 @@ import (
 	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
 	"flag"
-	"fmt"
 	"log"
 	"time"
 )
@@ -16,9 +15,8 @@ var (
 	port     = flag.String("port", "25565", "sets port")
 	protocol = flag.Int("protcol", 761, "sets version protocol")
 	duration = flag.Int("duration", 600, "duration in sec")
-	loops    = flag.Int("loops", 1, "no of loop threads")
+	c3PD     = flag.Int("c3pd", 5, "no of conn per proxy per delay")
 	delay    = flag.Int("delay", 1, "delay in sec")
-	perDelay = flag.Int("perdelay", 1000, "connections per delay")
 )
 
 func main() {
@@ -33,13 +31,12 @@ func main() {
 	}
 
 	info := core.AttackInfo{
-		Ip:       *ip,
-		Port:     *port,
-		Protocol: *protocol,
-		Duration: time.Duration(*duration) * time.Second,
-		Loops:    *loops,
-		Delay:    time.Duration(*delay) * time.Second,
-		PerDelay: *perDelay,
+		Ip:                   *ip,
+		Port:                 *port,
+		Protocol:             *protocol,
+		Duration:             time.Duration(*duration) * time.Second,
+		ConnPerProxyPerDelay: *c3PD,
+		Delay:                time.Duration(*delay) * time.Second,
 	}
 
 	registerMethod(&info, &proxyManager)
@@ -52,10 +49,8 @@ func main() {
 	method.Start()
 
 	for {
-		fmt.Print("Running")
-		time.Sleep(1 * time.Second)
-		fmt.Print("\r")
 	}
+
 }
 
 func registerMethod(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
