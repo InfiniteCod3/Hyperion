@@ -5,7 +5,9 @@ import (
 	"Hyperion/core/proxy"
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
+	"Hyperion/mc/packet"
 	"Hyperion/utils"
+	"log"
 	"strconv"
 	"time"
 )
@@ -16,6 +18,7 @@ type Join struct {
 }
 
 var shouldRun = false
+var handshakePacket packet.Packet
 
 func (join Join) Name() string {
 	return "Join"
@@ -28,6 +31,13 @@ func (join Join) Description() string {
 func (join Join) Start() {
 	utils.Init()
 	shouldRun = true
+
+	port, err := strconv.Atoi(join.Info.Port)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handshakePacket = mcutils.GetHandshakePacket(join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
 
 	for i := 0; i < join.Info.Loops; i++ {
 		go func() {
@@ -55,13 +65,9 @@ func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
 		return err
 	}
 
-	intport, perr := strconv.Atoi(*port)
-	if perr != nil {
-		return perr
-	}
+	conn.WritePacket(handshakePacket)
+	conn.WritePacket(mcutils.GetLoginPacket(utils.RandomName(16), protocol))
 
-	mcutils.WriteHandshake(conn, *ip, intport, protocol, mcutils.Login)
-	mcutils.WriteLoginPacket(conn, utils.RandomName(16), false, nil)
 	return nil
 }
 

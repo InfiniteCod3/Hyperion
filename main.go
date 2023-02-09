@@ -6,6 +6,7 @@ import (
 	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
 	"flag"
+	"fmt"
 	"log"
 	"time"
 )
@@ -32,6 +33,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	err = proxy.LoadFromFile(proxy.SOCKS5, "socks5.txt", &proxyManager)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	info := core.AttackInfo{
 		Ip:           *ip,
 		Port:         *port,
@@ -51,10 +57,8 @@ func main() {
 	}
 
 	method.Start()
-
-	for {
-	}
-
+	time.Sleep(time.Duration(*duration) * time.Second)
+	fmt.Println("DONE")
 }
 
 func registerMethod(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {

@@ -2,14 +2,15 @@ package proxy
 
 import (
 	"net"
+	"strconv"
 )
 
-type ProxyProtocol string
+type ProxyProtocol int
 
 const (
-	HTTP   ProxyProtocol = "http"
-	SOCKS4 ProxyProtocol = "socks4"
-	SOCKS5 ProxyProtocol = "socks5"
+	SOCKS4  ProxyProtocol = 0
+	SOCKS4A ProxyProtocol = 1
+	SOCKS5  ProxyProtocol = 2
 )
 
 type Proxy struct {
@@ -19,7 +20,7 @@ type Proxy struct {
 }
 
 func (proxy *Proxy) GetString() (key string) {
-	return string(proxy.Protocol) + "://" + net.JoinHostPort(proxy.Ip, proxy.Port)
+	return strconv.Itoa(int(proxy.Protocol)) + "://" + net.JoinHostPort(proxy.Ip, proxy.Port)
 }
 
 type ProxyManager struct {

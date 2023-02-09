@@ -1,7 +1,7 @@
 package mcutils
 
 import (
-	"Hyperion/mc"
+	"Hyperion/mc/mcversions"
 	"Hyperion/mc/packet"
 )
 
@@ -12,38 +12,35 @@ const (
 	Login  nextState = 2
 )
 
-const loginStart = 0x00
-
-func WriteHandshake(conn *mc.Connection, ip string, port int, protocol int, nextState nextState) (err error) {
-	err = conn.WritePacket(
-		packet.Marshal(
-			0x00,
-			packet.VarInt(protocol),
-			packet.String(ip),
-			packet.UnsignedShort(port),
-			packet.VarInt(nextState),
-		),
+func GetHandshakePacket(ip string, port int, protocol int, nextState nextState) (pk packet.Packet) {
+	pk = packet.Marshal(
+		0x00,
+		packet.VarInt(protocol),
+		packet.String(ip),
+		packet.UnsignedShort(port),
+		packet.VarInt(nextState),
 	)
 	return
 }
 
-func WriteLoginPacket(conn *mc.Connection, name string, hasUUID bool, uuid *packet.UUID) (err error) {
-	if hasUUID {
-		err = conn.WritePacket(
-			packet.Marshal(
-				0x00,
-				packet.String(name),
-				packet.Boolean(hasUUID),
-				uuid,
-			),
+func GetLoginPacket(name string, versionProtocol int) (pk packet.Packet) {
+	if versionProtocol == mcversions.V1_19_1 || versionProtocol == mcversions.V1_19 {
+		pk = packet.Marshal(
+			0x00,
+			packet.String(name),
+			packet.Boolean(false),
+			packet.Boolean(false),
+		)
+	} else if versionProtocol > mcversions.V1_19_1 {
+		pk = packet.Marshal(
+			0x00,
+			packet.String(name),
+			packet.Boolean(false),
 		)
 	} else {
-		err = conn.WritePacket(
-			packet.Marshal(
-				0x00,
-				packet.String(name),
-				packet.Boolean(hasUUID),
-			),
+		pk = packet.Marshal(
+			0x00,
+			packet.String(name),
 		)
 	}
 	return
