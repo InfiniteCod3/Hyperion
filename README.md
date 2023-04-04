@@ -1,4 +1,4 @@
-# HYPERION (WIP)
+# HYPERION
 Work In Progress
 Coming Soon!
 
