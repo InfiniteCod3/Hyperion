@@ -24,25 +24,25 @@ var (
 
 func main() {
   
-	fmt.Printf("██╗░░█╗██╗░░░██╗██████╗░███████╗██████╗░██╗░█████╗░███╗░░██╗\n██║░░██║╚██╗░██╔╝██╔══██╗██╔════╝██╔══██╗██║██╔══██╗████╗░██║\n███████║░╚████╔╝░██████╔╝█████╗░░██████╔╝██║██║░░██║██╔██╗██║\n██╔══██║░░╚██╔╝░░██╔═══╝░██╔══╝░░██╔══██╗██║██║░░██║██║╚████║\n██║░░██║░░░██║░░░██║░░░░░███████╗██║░░██║██║╚█████╔╝██║░╚███║\n╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░╚════╝░╚═╝░░╚══╝\n  Also try Ares!\n  Made by AnAverageBeing\n")
-	fmt.Printf("  Starting Hyperion...")
-	fmt.Printf("Parsing arguments...")
+	fmt.Println("██╗░░█╗██╗░░░██╗██████╗░███████╗██████╗░██╗░█████╗░███╗░░██╗\n██║░░██║╚██╗░██╔╝██╔══██╗██╔════╝██╔══██╗██║██╔══██╗████╗░██║\n███████║░╚████╔╝░██████╔╝█████╗░░██████╔╝██║██║░░██║██╔██╗██║\n██╔══██║░░╚██╔╝░░██╔═══╝░██╔══╝░░██╔══██╗██║██║░░██║██║╚████║\n██║░░██║░░░██║░░░██║░░░░░███████╗██║░░██║██║╚█████╔╝██║░╚███║\n╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░╚════╝░╚═╝░░╚══╝\n  Also try Ares!\n  Made by AnAverageBeing\n")
+	fmt.Println("  Starting Hyperion...")
+	fmt.Println("Parsing arguments...")
 	flag.Parse()
-	fmt.Printf("Parsing proxy (socks4 and socks5)...")
+	fmt.Println("Parsing proxy:")
   
 	proxyManager := proxy.ProxyManager{}
-
+	fmt.Println("socks4...")
 	err := proxy.LoadFromFile(proxy.SOCKS4, "socks4.txt", &proxyManager)
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Println("socks5...")
 	err = proxy.LoadFromFile(proxy.SOCKS5, "socks5.txt", &proxyManager)
 	if err != nil {
 		log.Fatal(err)
 	}
   
-	fmt.Printf("Preparing to attack...")
+	fmt.Println("Preparing to attack...")
 
 	info := core.AttackInfo{
 		Ip:           *ip,
