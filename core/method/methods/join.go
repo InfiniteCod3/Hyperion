@@ -29,19 +29,8 @@ func (join Join) Description() string {
 }
 
 func (join Join) Start() {
-	utils.Init()
-	shouldRun = true
 
-	port, err := strconv.Atoi(join.Info.Port)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	handshakePacket = mcutils.GetHandshakePacket(join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
-
-	// Create a worker pool
-	workerPool := make(chan struct{}, join.Info.Loops) // Loops is the number of workers
-	stop := make(chan struct{})
+}
 
 	// Start the workers
 	for i := 0; i < join.Info.Loops; i++ {
