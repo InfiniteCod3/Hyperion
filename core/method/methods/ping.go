@@ -34,7 +34,10 @@ func (ping Ping) Start() {
 					// Get the next proxy
 					proxy := ping.ProxyManager.GetNext()
 					// Do the work
-					// ...
+					for j := 0; j < ping.Info.PerDelay; j++ {
+						// Each loop represents a connection attempt
+						go connect(&ping.Info.Ip, &ping.Info.Port, ping.Info.Protocol, proxy)
+					}
 					// When done, release the worker
 					<-workerPool
 				}
