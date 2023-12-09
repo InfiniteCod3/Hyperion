@@ -2,6 +2,7 @@ package methods
 
 import (
 	"Hyperion/core/method/methods"
+	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
 )
 
