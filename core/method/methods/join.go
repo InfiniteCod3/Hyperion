@@ -39,13 +39,28 @@ func (join Join) Start() {
 
 	handshakePacket = mcutils.GetHandshakePacket(join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
 
+	// Create a worker pool
+	workerPool := make(chan struct{}, join.Info.Loops) // Loops is the number of workers
+	stop := make(chan struct{})
+
+	// Start the workers
 	for i := 0; i < join.Info.Loops; i++ {
 		go func() {
-			for shouldRun {
-				for j := 0; j < join.Info.PerDelay; j++ {
-					loop(&join)
+			for {
+				select {
+				case <-stop:
+					return
+				case workerPool <- struct{}{}:
+					// Get the next proxy
+					proxy := join.ProxyManager.GetNext()
+					// Do the work
+					for j := 0; j < join.Info.PerDelay; j++ {
+						loop(&join, proxy)
+					}
+					time.Sleep(join.Info.Delay)
+					// When done, release the worker
+					<-workerPool
 				}
-				time.Sleep(join.Info.Delay)
 			}
 		}()
 	}
@@ -71,6 +86,9 @@ func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
 	return nil
 }
 
+func (join Join) Stop() {
+	shouldRun = false
+}
 func (join Join) Stop() {
 	shouldRun = false
 }
