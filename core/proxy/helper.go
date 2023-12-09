@@ -16,25 +16,57 @@ func LoadFromFile(protocol ProxyProtocol, path string, manager *ProxyManager) er
 	}
 
 	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		match := proxyRegex.FindStringSubmatch(line)
-		if len(match) != 3 {
-			return err
+
+	lines := make(chan string)
+	errors := make(chan error)
+	done := make(chan bool)
+
+	go func() {
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			lines <- scanner.Text()
 		}
-
-		ip := match[1]
-		port := match[2]
-
-		proxy := &Proxy{
-			Ip:       ip,
-			Port:     port,
-			Protocol: protocol,
+		if err := scanner.Err(); err != nil {
+			errors <- err
 		}
+		close(lines)
+	}()
 
-		manager.Add(proxy)
+	for i := 0; i < 10; i++ {
+		go func() {
+			for line := range lines {
+				line = strings.TrimSpace(line)
+				match := proxyRegex.FindStringSubmatch(line)
+				if len(match) != 3 {
+					errors <- fmt.Errorf("invalid proxy format: %s", line)
+					continue
+				}
+
+				ip := match[1]
+				port := match[2]
+
+				proxy := &Proxy{
+					Ip:       ip,
+					Port:     port,
+					Protocol: protocol,
+				}
+
+				manager.Add(proxy)
+			}
+			done <- true
+		}()
 	}
 
-	return scanner.Err()
+	for i := 0; i < 10; i++ {
+		<-done
+	}
+
+	close(errors)
+	for err := range errors {
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
