@@ -25,5 +25,6 @@ func (ping Ping) Start() {
 func (ping Ping) Stop() {
 	// implementation for stopping the Ping method
 }
-import "time"
-import "time"
+import (
+	"time"
+)
