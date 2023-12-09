@@ -1,7 +1,7 @@
 package methods
 
 import (
-	"Hyperion/core/method/methods"
+	"Hyperion/core/method"
 	"Hyperion/core/proxy"
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
