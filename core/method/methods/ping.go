@@ -3,6 +3,9 @@ package methods
 import (
 	"Hyperion/core"
 	"Hyperion/core/proxy"
+	"context"
+	"log"
+	"sync"
 )
 
 type Ping struct {
