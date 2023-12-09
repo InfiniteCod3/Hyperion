@@ -19,9 +19,7 @@ type Packet struct {
 // Marshal generate Packet with the ID and Fields
 func Marshal[ID ~int32 | int](id ID, fields ...FieldEncoder) (pk Packet) {
 	var pb Builder
-	for _, v := range fields {
-		pb.WriteField(v)
-	}
+	pb.WriteField(fields...)
 	return pb.Packet(int32(id))
 }
 
@@ -29,8 +27,7 @@ func Marshal[ID ~int32 | int](id ID, fields ...FieldEncoder) (pk Packet) {
 func (p Packet) Scan(fields ...FieldDecoder) error {
 	r := bytes.NewReader(p.Data)
 	for i, v := range fields {
-		_, err := v.ReadFrom(r)
-		if err != nil {
+		if _, err := v.ReadFrom(r); err != nil {
 			return fmt.Errorf("scanning packet field[%d] error: %w", i, err)
 		}
 	}
