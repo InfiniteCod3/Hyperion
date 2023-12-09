@@ -55,7 +55,8 @@ func (join Join) Start() {
 					proxy := join.ProxyManager.GetNext()
 					// Do the work
 					for j := 0; j < join.Info.PerDelay; j++ {
-						loop(&join, proxy)
+						// Each loop represents a connection attempt
+						go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
 					}
 					time.Sleep(join.Info.Delay)
 					// When done, release the worker
