@@ -3,6 +3,8 @@ package methods
 import (
 	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
+	"Hyperion/mc"
+	"Hyperion/mc/mcutils"
 )
 
 type MOTD struct {
