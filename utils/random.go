@@ -14,8 +14,14 @@ var (
 
 func Init() {
 	go func() {
+		batch := make([]int, 1024)
 		for {
-			randCh <- int(src.Int63() % int64(validNameRunesLen))
+			for i := range batch {
+				batch[i] = int(src.Int63() % int64(validNameRunesLen))
+			}
+			for _, num := range batch {
+				randCh <- num
+			}
 		}
 	}()
 }
