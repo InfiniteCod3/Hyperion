@@ -34,7 +34,10 @@ func (motd MOTD) Start() {
 					// Get the next proxy
 					proxy := motd.ProxyManager.GetNext()
 					// Do the work
-					// ...
+					for j := 0; j < motd.Info.PerDelay; j++ {
+						// Each loop represents a connection attempt
+						go connect(&motd.Info.Ip, &motd.Info.Port, motd.Info.Protocol, proxy)
+					}
 					// When done, release the worker
 					<-workerPool
 				}
