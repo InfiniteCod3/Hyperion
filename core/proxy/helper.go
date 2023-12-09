@@ -21,7 +21,7 @@ func LoadFromFile(protocol ProxyProtocol, path string, manager *ProxyManager) er
 		line := strings.TrimSpace(scanner.Text())
 		match := proxyRegex.FindStringSubmatch(line)
 		if len(match) != 3 {
-			return err
+			continue
 		}
 
 		ip := match[1]
