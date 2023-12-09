@@ -8,11 +8,11 @@ import (
 )
 
 type MOTD struct {
-	Info         *methods.AttackInfo
+	Info         *method.AttackInfo
 	ProxyManager *proxy.ProxyManager
 }
 
-func (Method MOTD) Name() string {
+func (motd MOTD) Name() string {
 	return "MOTD"
 }
 
@@ -20,17 +20,8 @@ func (motd MOTD) Description() string {
 	return "Joins server and then flood request motd"
 }
 
-func (motd *MOTD) Start() {
-	go func() {
-		for {
-			select {
-			case <-motd.Info.Stop:
-				return
-			default:
-				motd.ProxyManager.SendMOTDRequest(motd.Info.Target)
-			}
-		}
-	}()
+func (motd MOTD) Start() {
+
 }
 
 func (motd MOTD) Stop() {
