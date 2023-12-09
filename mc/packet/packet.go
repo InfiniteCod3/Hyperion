@@ -59,7 +59,7 @@ func (p *Packet) packWithoutCompression(w io.Writer) error {
 	buffer := bufPool.Get().(*bytes.Buffer)
 	defer bufPool.Put(buffer)
 	buffer.Reset()
-	n, err := VarInt(p.ID).WriteTo(bw)
+	n, err := VarInt(p.ID).WriteTo(buffer)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func (p *Packet) packWithoutCompression(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	// Packet ID
+	// Packet ID + Data
 	_, err = buffer.WriteTo(bw)
 	if err != nil {
 		return err
@@ -212,7 +212,7 @@ func (p *Packet) unpackWithCompression(r io.Reader, threshold int) error {
 	r = bytes.NewReader(buff.Bytes())
 
 	var DataLength VarInt
-	n2, err := DataLength.ReadFrom(br)
+	n2, err := DataLength.ReadFrom(r)
 	if err != nil {
 		return err
 	}
