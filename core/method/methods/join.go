@@ -59,7 +59,6 @@ func loop(join *Join) {
 }
 
 func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
-
 	conn, err := mc.DialMC(ip, port, proxy)
 	if err != nil {
 		return err
