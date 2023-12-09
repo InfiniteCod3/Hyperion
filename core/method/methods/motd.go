@@ -8,11 +8,11 @@ import (
 )
 
 type MOTD struct {
-	Info         *methods.AttackInfo
+	Info         *method.AttackInfo
 	ProxyManager *proxy.ProxyManager
 }
 
-func (Method MOTD) Name() string {
+func (motd MOTD) Name() string {
 	return "MOTD"
 }
 

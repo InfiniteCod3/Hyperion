@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Hyperion/core/method/methods"
+	"Hyperion/core/method/methods/join"
 	"Hyperion/core/proxy"
 	"flag"
 	"fmt"
