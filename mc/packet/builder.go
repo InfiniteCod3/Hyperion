@@ -9,10 +9,8 @@ type Builder struct {
 }
 
 func (p *Builder) WriteField(fields ...FieldEncoder) {
-	w := bufio.NewWriter(&p.buf)
-	defer w.Flush()
 	for _, f := range fields {
-		_, err := f.WriteTo(w)
+		_, err := f.WriteTo(&p.buf)
 		if err != nil {
 			panic(err)
 		}

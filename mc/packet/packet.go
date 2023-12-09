@@ -2,8 +2,7 @@ package packet
 
 import (
 	"bytes"
-	"bufio"
-	"compress/gzip"
+	"compress/zlib"
 	"fmt"
 	"io"
 	"sync"
@@ -54,27 +53,25 @@ func (p *Packet) Pack(w io.Writer, threshold int) error {
 }
 
 func (p *Packet) packWithoutCompression(w io.Writer) error {
-	bw := bufio.NewWriter(w)
-	defer bw.Flush()
 	buffer := bufPool.Get().(*bytes.Buffer)
 	defer bufPool.Put(buffer)
 	buffer.Reset()
-	n, err := VarInt(p.ID).WriteTo(bw)
+	n, err := VarInt(p.ID).WriteTo(buffer)
 	if err != nil {
 		panic(err)
 	}
 	// Length
-	_, err = VarInt(int(n) + len(p.Data)).WriteTo(bw)
+	_, err = VarInt(int(n) + len(p.Data)).WriteTo(w)
 	if err != nil {
 		return err
 	}
 	// Packet ID
-	_, err = buffer.WriteTo(bw)
+	_, err = buffer.WriteTo(w)
 	if err != nil {
 		return err
 	}
 	// Data
-	_, err = bw.Write(p.Data)
+	_, err = w.Write(p.Data)
 	if err != nil {
 		return err
 	}
@@ -82,8 +79,6 @@ func (p *Packet) packWithoutCompression(w io.Writer) error {
 }
 
 func (p *Packet) packWithCompression(w io.Writer, threshold int) error {
-	bw := bufio.NewWriter(w)
-	defer bw.Flush()
 	buff := bufPool.Get().(*bytes.Buffer)
 	defer bufPool.Put(buff)
 	buff.Reset()
@@ -102,17 +97,17 @@ func (p *Packet) packWithCompression(w io.Writer, threshold int) error {
 			return err
 		}
 		// Packet Length
-		_, err = VarInt(buff.Len()).WriteTo(bw)
+		_, err = VarInt(buff.Len()).WriteTo(w)
 		if err != nil {
 			return err
 		}
 		// Data Length + Packet ID + Data
-		_, err = buff.WriteTo(bw)
+		_, err = buff.WriteTo(w)
 		if err != nil {
 			return err
 		}
 	} else {
-		zw := gzip.NewWriter(buff)
+		zw := zlib.NewWriter(buff)
 		n1, err := VarInt(p.ID).WriteTo(zw)
 		if err != nil {
 			return err
@@ -135,17 +130,17 @@ func (p *Packet) packWithCompression(w io.Writer, threshold int) error {
 		}
 
 		// Packet Length
-		_, err = VarInt(int(n3) + buff.Len()).WriteTo(bw)
+		_, err = VarInt(int(n3) + buff.Len()).WriteTo(w)
 		if err != nil {
 			return err
 		}
 		// Data Length
-		_, err = dataLength.WriteTo(bw)
+		_, err = dataLength.WriteTo(w)
 		if err != nil {
 			return err
 		}
 		// PacketID + Data
-		_, err = buff.WriteTo(bw)
+		_, err = buff.WriteTo(w)
 		if err != nil {
 			return err
 		}
@@ -163,15 +158,14 @@ func (p *Packet) UnPack(r io.Reader, threshold int) error {
 }
 
 func (p *Packet) unpackWithoutCompression(r io.Reader) error {
-	br := bufio.NewReader(r)
 	var Length VarInt
-	_, err := Length.ReadFrom(br)
+	_, err := Length.ReadFrom(r)
 	if err != nil {
 		return err
 	}
 
 	var PacketID VarInt
-	n, err := PacketID.ReadFrom(br)
+	n, err := PacketID.ReadFrom(r)
 	if err != nil {
 		return err
 	}
@@ -186,7 +180,7 @@ func (p *Packet) unpackWithoutCompression(r io.Reader) error {
 	} else {
 		p.Data = p.Data[:lengthOfData]
 	}
-	_, err = io.ReadFull(br, p.Data)
+	_, err = io.ReadFull(r, p.Data)
 	if err != nil {
 		return err
 	}
@@ -194,9 +188,8 @@ func (p *Packet) unpackWithoutCompression(r io.Reader) error {
 }
 
 func (p *Packet) unpackWithCompression(r io.Reader, threshold int) error {
-	br := bufio.NewReader(r)
 	var PacketLength VarInt
-	_, err := PacketLength.ReadFrom(br)
+	_, err := PacketLength.ReadFrom(r)
 	if err != nil {
 		return err
 	}
@@ -205,14 +198,14 @@ func (p *Packet) unpackWithCompression(r io.Reader, threshold int) error {
 	defer bufPool.Put(buff)
 	buff.Reset()
 
-	_, err = io.CopyN(buff, br, int64(PacketLength))
+	_, err = io.CopyN(buff, r, int64(PacketLength))
 	if err != nil {
 		return err
 	}
 	r = bytes.NewReader(buff.Bytes())
 
 	var DataLength VarInt
-	n2, err := DataLength.ReadFrom(br)
+	n2, err := DataLength.ReadFrom(r)
 	if err != nil {
 		return err
 	}
@@ -225,13 +218,13 @@ func (p *Packet) unpackWithCompression(r io.Reader, threshold int) error {
 		if DataLength > MaxDataLength {
 			return fmt.Errorf("compressed packet error: size of %d is larger than protocol maximum of %d", DataLength, MaxDataLength)
 		}
-		zr, err := gzip.NewReader(r)
+		zr, err := zlib.NewReader(r)
 		if err != nil {
 			return err
 		}
 		defer zr.Close()
 		r = zr
-		n3, err := PacketID.ReadFrom(br)
+		n3, err := PacketID.ReadFrom(r)
 		if err != nil {
 			return err
 		}

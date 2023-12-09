@@ -24,8 +24,7 @@ func (proxy *Proxy) GetString() (key string) {
 }
 
 type ProxyManager struct {
-	proxies map[string]*Proxy
-	keys    []string
+	proxies []*Proxy
 	atIndex int
 }
 
@@ -50,14 +49,6 @@ func (manager *ProxyManager) Length() (length int) {
 func (manager *ProxyManager) GetNext() *Proxy {
 	manager.atIndex = manager.atIndex + 1
 	if manager.atIndex >= len(manager.proxies) {
-		manager.atIndex = 0
-	}
-	return manager.proxies[manager.atIndex]
-}
-		manager.atIndex = 0
-	}
-	return manager.proxies[manager.atIndex]
-}
 		manager.atIndex = 0
 	}
 	return manager.proxies[manager.atIndex]

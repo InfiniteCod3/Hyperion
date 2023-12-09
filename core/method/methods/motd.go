@@ -1,14 +1,12 @@
 package methods
 
 import (
-	"Hyperion/core/method/methods"
+	"Hyperion/core"
 	"Hyperion/core/proxy"
-	"Hyperion/mc"
-	"Hyperion/mc/mcutils"
 )
 
 type MOTD struct {
-	Info         *methods.AttackInfo
+	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
 }
 

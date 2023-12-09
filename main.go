@@ -1,6 +1,8 @@
 package main
 
 import (
+	"Hyperion/core"
+	"Hyperion/core/method"
 	"Hyperion/core/method/methods"
 	"Hyperion/core/proxy"
 	"flag"
@@ -42,7 +44,7 @@ func main() {
   
 	fmt.Println("Preparing to attack...")
 
-	info := methods.AttackInfo{
+	info := core.AttackInfo{
 		Ip:           *ip,
 		Port:         *port,
 		Protocol:     *protocol,
@@ -67,7 +69,7 @@ func main() {
   
 }
 
-func registerMethod(info *methods.AttackInfo, proxyManager *proxy.ProxyManager) {
+func registerMethod(info *core.AttackInfo, proxyManager *proxy.ProxyManager) {
 	method.RegisterMethod(methods.Join{
 		Info:         info,
 		ProxyManager: proxyManager,

@@ -451,36 +451,21 @@ func (p *PluginMessageData) ReadFrom(r io.Reader) (n int64, err error) {
 }
 
 func (b BitSet) WriteTo(w io.Writer) (n int64, err error) {
-	bitset := bitset.New(uint(len(b)))
-	for i, v := range b {
-		if v != 0 {
-			bitset.Set(uint(i))
-		}
-	}
-	data, err := bitset.MarshalBinary()
+	n, err = VarInt(len(b)).WriteTo(w)
 	if err != nil {
-		return 0, err
+		return
 	}
-	return w.Write(data)
+	for i := range b {
+		n2, err := Long(b[i]).WriteTo(w)
+		if err != nil {
+			return n + n2, err
+		}
+		n += n2
+	}
+	return
 }
 
 func (b *BitSet) ReadFrom(r io.Reader) (n int64, err error) {
-	data, err := ioutil.ReadAll(r)
-	if err != nil {
-		return 0, err
-	}
-	bitset := bitset.New(0)
-	err = bitset.UnmarshalBinary(data)
-	if err != nil {
-		return 0, err
-	}
-	*b = make(BitSet, bitset.Len())
-	for i := range *b {
-		if bitset.Test(uint(i)) {
-			(*b)[i] = 1
-		}
-	}
-	return int64(len(data)), nil
 	var Len VarInt
 	n, err = Len.ReadFrom(r)
 	if err != nil {
@@ -525,76 +510,24 @@ func NewFixedBitSet(n int64) FixedBitSet {
 }
 
 func (f FixedBitSet) WriteTo(w io.Writer) (n int64, err error) {
-	bitset := bitset.New(uint(len(f) * 8))
-	for i, v := range f {
-		for j := 0; j < 8; j++ {
-			if v&(1<<j) != 0 {
-				bitset.Set(uint(i*8 + j))
-			}
-		}
-	}
-	data, err := bitset.MarshalBinary()
-	if err != nil {
-		return 0, err
-	}
-	return w.Write(data)
+	n2, err := w.Write(f)
+	return int64(n2), err
 }
 
-func (f *FixedBitSet) ReadFrom(r io.Reader) (n int64, err error) {
-	data, err := ioutil.ReadAll(r)
-	if err != nil {
-		return 0, err
-	}
-	bitset := bitset.New(0)
-	err = bitset.UnmarshalBinary(data)
-	if err != nil {
-		return 0, err
-	}
-	*f = make(FixedBitSet, (bitset.Len()+7)/8)
-	for i := range *f {
-		for j := 0; j < 8; j++ {
-			if bitset.Test(uint(i*8 + j)) {
-				(*f)[i] |= 1 << j
-			}
-		}
-	}
-	return int64(len(data)), nil
+func (f FixedBitSet) ReadFrom(r io.Reader) (n int64, err error) {
+	n2, err := r.Read(f)
+	return int64(n2), err
 }
 
 func (f FixedBitSet) Get(index int) bool {
-	bitset := bitset.New(uint(len(f) * 8))
-	for i, v := range f {
-		for j := 0; j < 8; j++ {
-			if v&(1<<j) != 0 {
-				bitset.Set(uint(i*8 + j))
-			}
-		}
-	}
-	return bitset.Test(uint(index))
+	return (f[index/8] & (1 << (index % 8))) != 0
 }
 
 func (f FixedBitSet) Set(index int, value bool) {
-	bitset := bitset.New(uint(len(f) * 8))
-	for i, v := range f {
-		for j := 0; j < 8; j++ {
-			if v&(1<<j) != 0 {
-				bitset.Set(uint(i*8 + j))
-			}
-		}
-	}
 	if value {
-		bitset.Set(uint(index))
+		f[index/8] |= 1 << (index % 8)
 	} else {
-		bitset.Clear(uint(index))
-	}
-	for i := range f {
-		for j := 0; j < 8; j++ {
-			if bitset.Test(uint(i*8 + j)) {
-				f[i] |= 1 << j
-			} else {
-				f[i] &= ^(1 << j)
-			}
-		}
+		f[index/8] &= ^(1 << (index % 8))
 	}
 }
 

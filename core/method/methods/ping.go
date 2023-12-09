@@ -1,13 +1,12 @@
 package methods
 
 import (
-	"Hyperion/core/method/methods"
-	"Hyperion/core/method/methods"
+	"Hyperion/core"
 	"Hyperion/core/proxy"
 )
 
 type Ping struct {
-	Info         *methods.AttackInfo
+	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
 }
 
