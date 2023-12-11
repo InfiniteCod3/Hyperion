@@ -3,7 +3,7 @@ package main
 import (
 	"Hyperion/core"
 	"Hyperion/core/method"
-	"Hyperion/core/method/methods"
+	"Hyperion/core/method/methods/ping"
 	"Hyperion/core/proxy"
 	"flag"
 	"fmt"
