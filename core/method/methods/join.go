@@ -49,6 +49,29 @@ func (join Join) Start() {
 			}
 		}()
 	}
+func loop(join *Join) {
+	proxy := join.ProxyManager.GetNext()
+	for i := 0; i < join.Info.ConnPerProxy; i++ {
+		go connect(&join.Info.Ip, &join.Info.Port, join.Info.Protocol, proxy)
+	}
+}
+
+func connect(ip *string, port *string, protocol int, proxy *proxy.Proxy) error {
+
+	conn, err := mc.DialMC(ip, port, proxy)
+	if err != nil {
+		return err
+	}
+
+	conn.WritePacket(handshakePacket)
+	conn.WritePacket(mcutils.GetLoginPacket(utils.RandomName(16), protocol))
+
+	return nil
+}
+
+func (join Join) Stop() {
+	shouldRun = false
+}
 }
 
 func loop(join *Join) {
