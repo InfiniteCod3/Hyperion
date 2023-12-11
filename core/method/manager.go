@@ -5,6 +5,7 @@ import (
 )
 
 type Method interface {
+	Description() string
 	Name() string
 	Description() string
 	Start()

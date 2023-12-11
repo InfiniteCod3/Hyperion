@@ -8,6 +8,14 @@ import (
 	"sync"
 )
 
+import (
+	"Hyperion/core"
+	"Hyperion/core/proxy"
+	"context"
+	"log"
+	"sync"
+)
+
 type Ping struct {
 	Info         *core.AttackInfo
 	ProxyManager *proxy.ProxyManager
